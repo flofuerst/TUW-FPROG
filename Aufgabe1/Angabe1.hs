@@ -71,25 +71,54 @@ charWeight currentChar (x:xs)
   | otherwise = charWeight currentChar xs
 
 {- Knapp, aber gut nachvollziehbar geht gewicht folgendermassen vor:
-   ...
+   Die Summe der Gewichte wird standardmäßig mit 0 angenommen. Die Gewichtssumme setzt sich aus dem Gewicht
+   des ersten Tupels und den rekursiven Aufrufen der Rechenvorschrift 'gewicht' der restlichen Tupel zusammen.
+   Das Gewicht der jeweiligen einzelnen Tupel wird durch charWeight berechnet. 
+
+
+
+
+
+
+   !!!!!!!!!!!!!!!!! -1 ERWÄHNEN !!!!!!!!!!!!!!!!!!!
 -}
 
 
 
 -- Aufgabe A.3
 
---korrigiere :: Gewichtsverzeichnis -> Gewichtsverzeichnis
+korrigiere :: Gewichtsverzeichnis -> Gewichtsverzeichnis
+korrigiere [] = []
+korrigiere (x:xs) = x:korrigiere(delMultipleOccurrence (fst x) xs)
+
+delMultipleOccurrence :: Zeichen -> Gewichtsverzeichnis -> Gewichtsverzeichnis
+delMultipleOccurrence character [] = []
+delMultipleOccurrence character (x:xs)
+   | character == fst x = delMultipleOccurrence character xs
+   | otherwise = x:delMultipleOccurrence character xs
 
 {- Knapp, aber gut nachvollziehbar geht korrigiere folgendermassen vor:
-   ...
+   Jedes Zeichen wird nach für nach betrachtet (von links beginnend). Wenn das Zeichen mehrfach im Gewichtsverzeichnis
+   vorkommt, so wird dieses Merfachvorkommen entfernt.
+   Sobald der jeweilige Buchstabe bearbeitet wurde wird nur mehr mit dem verbesserten Verzeichnis weitergearbeitet.
 -}
 
 
 
 -- Aufgabe A.4
 
---korrigiere' :: Gewichtsverzeichnis -> Gewichtsverzeichnis
+korrigiere' :: Gewichtsverzeichnis -> Gewichtsverzeichnis
+korrigiere' [] = []
+korrigiere' (x:xs) = (fst x, snd x + getTotalWeight (fst x) xs):korrigiere'(delMultipleOccurrence (fst x) xs)
 
+getTotalWeight :: Zeichen -> Gewichtsverzeichnis -> Gewicht
+getTotalWeight character [] = 0
+getTotalWeight character (x:xs)
+   | character == fst x = snd x + getTotalWeight character xs
+   | otherwise = getTotalWeight character xs
 {- Knapp, aber gut nachvollziehbar geht korrigiere' folgendermassen vor:
-   ...
+   Jedes Zeichen wird nach für nach betrachtet (von links beginnend). Das Gewicht der Mehrfachvorkommen wird jeweils 
+   immer zu dem schon bestehenden Gewicht addiert (falls das Zeichen mehrfach vorkommt). Die Einträge der 
+   Mehrfachvorkommen in Form von Tupel werden nach der Summierung entfernt. 
+   Sobald der jeweilige Buchstabe bearbeitet wurde wird nur mehr mit dem verbesserten Verzeichnis weitergearbeitet.
 -}
